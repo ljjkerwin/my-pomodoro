@@ -1,0 +1,206 @@
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  width: 300px;
+  padding: 20px;
+  background-color: #f4f4f4;
+  color: #333;
+  text-align: center;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+h1 {
+  margin-top: 0;
+  color: #e74c3c;
+}
+
+.timer-display {
+  font-size: 3rem;
+  font-weight: bold;
+  margin: 20px 0;
+  color: #2c3e50;
+}
+
+.status {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  color: #7f8c8d;
+}
+
+.controls-top {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.btn-work {
+  flex: 1;
+  background-color: #4688F1;
+  color: white;
+  padding: 15px 10px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: all 0.2s;
+}
+
+.btn-work:hover {
+  background-color: #357ae8;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+}
+
+.btn-break {
+  flex: 1;
+  background-color: #0F9D58;
+  color: white;
+  padding: 15px 10px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: all 0.2s;
+}
+
+.btn-break:hover {
+  background-color: #0d8a4d;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+}
+
+.presets-section {
+  display: flex;
+  width: 100%;
+  margin-top: 20px;
+  border-top: 1px solid #eee;
+  padding-top: 20px;
+  justify-content: space-around;
+}
+
+.preset-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.work-column h3 {
+  color: #4688F1;
+  margin-bottom: 15px;
+}
+
+.break-column h3 {
+  color: #0F9D58;
+  margin-bottom: 15px;
+}
+
+.preset-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.preset-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  padding: 5px 10px;
+  border-radius: 20px; /* Pill shape */
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  transition: all 0.2s;
+}
+
+/* Removed .active class styling to keep default presets looking standard */
+
+.preset-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  color: #555;
+  font-size: 1rem;
+  padding: 0 5px;
+}
+
+.work-column .preset-btn:hover {
+  color: #4688F1;
+}
+
+.break-column .preset-btn:hover {
+  color: #0F9D58;
+}
+
+.default-indicator {
+  cursor: pointer;
+  color: #ccc;
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.default-indicator.is-default {
+  color: #f1c40f;
+}
+
+.delete-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #999;
+  font-size: 0.8rem;
+  margin-left: 2px;
+}
+
+.delete-btn:hover {
+  color: #e74c3c;
+}
+
+.add-preset-mini {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+
+.add-preset-mini input {
+  width: 50px;
+  padding: 5px;
+  text-align: center;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.add-preset-mini button {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: none;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#add-work-btn {
+  background-color: #4688F1;
+}
+
+#add-break-btn {
+  background-color: #0F9D58;
+}

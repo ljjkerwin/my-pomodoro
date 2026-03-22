@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Pomodoro</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <div class="controls-top">
+      <button id="start-work-btn" class="btn-work">Start Work</button>
+      <button id="start-break-btn" class="btn-break">Start Break</button>
+    </div>
+    
+    <div class="timer-display" id="timer">25:00</div>
+    <div class="status" id="status">Work Time</div>
+    
+    <div class="presets-section">
+      <div class="preset-column work-column">
+        <h3>Work Presets</h3>
+        <div id="work-preset-list" class="preset-list"></div>
+        <div class="add-preset-mini">
+           <input type="number" id="new-work" placeholder="min" min="1">
+           <button id="add-work-btn">+</button>
+        </div>
+      </div>
+      
+      <div class="preset-column break-column">
+        <h3>Break Presets</h3>
+        <div id="break-preset-list" class="preset-list"></div>
+        <div class="add-preset-mini">
+           <input type="number" id="new-break" placeholder="min" min="1">
+           <button id="add-break-btn">+</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
