@@ -7,7 +7,8 @@ const defaultState = {
   remainingTime: 25 * 60, 
   workDuration: 25 * 60, 
   breakDuration: 5 * 60,
-  targetTime: null
+  targetTime: null,
+  lastActivity: Date.now()
 };
 
 // New Preset Structure: Separate lists for Work and Break
@@ -25,11 +26,19 @@ const defaultPresets = {
 // Helper to get state
 async function getState() {
   const result = await chrome.storage.local.get(['timerState']);
-  return result.timerState || defaultState;
+  let state = result.timerState || defaultState;
+  
+  // Ensure lastActivity exists for older states
+  if (!state.lastActivity) {
+      state.lastActivity = Date.now();
+  }
+  
+  return state;
 }
 
 // Helper to save state
 async function saveState(state) {
+  state.lastActivity = Date.now();
   await chrome.storage.local.set({ timerState: state });
   updateBadge(state);
 }
@@ -77,6 +86,9 @@ async function getPresets() {
 async function savePresets(presets) {
   await chrome.storage.local.set({ presets });
 }
+
+// Badge update interval ID
+let badgeIntervalId = null;
 
 // Helper to update badge
 function updateBadge(state) {
@@ -164,15 +176,12 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
       state.remainingTime = state.workDuration;
     }
     
-    // Clear recurring badge alarm
-    chrome.alarms.clear('badgeUpdate');
+    if (badgeIntervalId) {
+      clearInterval(badgeIntervalId);
+      badgeIntervalId = null;
+    }
     
     await saveState(state);
-  } else if (alarm.name === 'badgeUpdate') {
-    const state = await getState();
-    if (state.status === 'running') {
-      updateBadge(state);
-    }
   }
 });
 
@@ -184,7 +193,20 @@ async function startTimer(state) {
   state.targetTime = Date.now() + state.remainingTime * 1000;
   
   chrome.alarms.create('pomodoroTimer', { when: state.targetTime });
-  chrome.alarms.create('badgeUpdate', { periodInMinutes: 1 });
+  
+  // Use setInterval for accurate per-second badge updates while running
+  if (badgeIntervalId) clearInterval(badgeIntervalId);
+  badgeIntervalId = setInterval(async () => {
+    const currentState = await getState();
+    if (currentState.status === 'running') {
+      updateBadge(currentState);
+    } else {
+      clearInterval(badgeIntervalId);
+    }
+  }, 1000);
+  
+  // Initial badge update immediately
+  updateBadge(state);
   
   await saveState(state);
 }
@@ -192,7 +214,10 @@ async function startTimer(state) {
 async function pauseTimer(state) {
   state.status = 'paused';
   chrome.alarms.clear('pomodoroTimer');
-  chrome.alarms.clear('badgeUpdate');
+  if (badgeIntervalId) {
+    clearInterval(badgeIntervalId);
+    badgeIntervalId = null;
+  }
   
   state.targetTime = null;
   // Reset remaining time to DEFAULT duration based on current mode
@@ -212,6 +237,17 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   // Use an async IIFE to handle the logic and sendResponse
   (async () => {
     let state = await getState();
+
+    // Check for 5 hours inactivity reset
+    const FIVE_HOURS_IN_MS = 5 * 60 * 60 * 1000;
+    if (state.status !== 'running' && (Date.now() - state.lastActivity > FIVE_HOURS_IN_MS)) {
+        const presets = await getPresets();
+        state.mode = 'work';
+        state.workDuration = presets.work.default * 60;
+        state.remainingTime = state.workDuration;
+        // Don't need to save here, it will be saved later if there's an action, 
+        // or just returned via get-state which is fine.
+    }
 
     // Calculate current time if running (common logic)
     if (state.status === 'running' && state.targetTime) {
@@ -291,7 +327,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     }
     else if (request.action === 'reset') {
       chrome.alarms.clear('pomodoroTimer');
-      chrome.alarms.clear('badgeUpdate');
+      if (badgeIntervalId) {
+        clearInterval(badgeIntervalId);
+        badgeIntervalId = null;
+      }
       
       state.status = 'paused';
       // Reset logic: keep current mode but reset time? Or reset to work?
